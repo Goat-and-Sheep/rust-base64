@@ -177,78 +177,16 @@ fn decode_chunk_8(
     decode_table: &[u8; 256],
     output: &mut [u8],
 ) -> Result<(), DecodeError> {
-    let morsel = decode_table[usize::from(input[0])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(index_at_start_of_input, input[0]));
+    let mut accum = 0u64;
+    for i in 0..8{
+        let morsel = decode_table[usize::from(input[i])]
+        if morsel == INVALID_VALUE {
+            return Err(DecodeError::InvalidByte(index_at_start_of_input+i, input[i]));
+        }
+        accum |= u64::from(morsel) << 64-(i+1)*6;
     }
-    let mut accum = u64::from(morsel) << 58;
-
-    let morsel = decode_table[usize::from(input[1])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 1,
-            input[1],
-        ));
-    }
-    accum |= u64::from(morsel) << 52;
-
-    let morsel = decode_table[usize::from(input[2])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 2,
-            input[2],
-        ));
-    }
-    accum |= u64::from(morsel) << 46;
-
-    let morsel = decode_table[usize::from(input[3])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 3,
-            input[3],
-        ));
-    }
-    accum |= u64::from(morsel) << 40;
-
-    let morsel = decode_table[usize::from(input[4])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 4,
-            input[4],
-        ));
-    }
-    accum |= u64::from(morsel) << 34;
-
-    let morsel = decode_table[usize::from(input[5])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 5,
-            input[5],
-        ));
-    }
-    accum |= u64::from(morsel) << 28;
-
-    let morsel = decode_table[usize::from(input[6])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 6,
-            input[6],
-        ));
-    }
-    accum |= u64::from(morsel) << 22;
-
-    let morsel = decode_table[usize::from(input[7])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 7,
-            input[7],
-        ));
-    }
-    accum |= u64::from(morsel) << 16;
-
     output[..6].copy_from_slice(&accum.to_be_bytes()[..6]);
-
-    Ok(())
+    ok(())
 }
 
 /// Like [decode_chunk_8] but for 4 bytes of input and 3 bytes of output.
@@ -259,42 +197,16 @@ fn decode_chunk_4(
     decode_table: &[u8; 256],
     output: &mut [u8],
 ) -> Result<(), DecodeError> {
-    let morsel = decode_table[usize::from(input[0])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(index_at_start_of_input, input[0]));
+    let mut accum = 0u32;
+    for i in 0..4{
+        let morsel = decode_table[usize::from(input[i])]
+        if morsel == INVALID_VALUE {
+            return Err(DecodeError::InvalidByte(index_at_start_of_input+i, input[i]));
+        }
+        accum |= u64::from(morsel) << 32-(i+1)*6;
     }
-    let mut accum = u32::from(morsel) << 26;
-
-    let morsel = decode_table[usize::from(input[1])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 1,
-            input[1],
-        ));
-    }
-    accum |= u32::from(morsel) << 20;
-
-    let morsel = decode_table[usize::from(input[2])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 2,
-            input[2],
-        ));
-    }
-    accum |= u32::from(morsel) << 14;
-
-    let morsel = decode_table[usize::from(input[3])];
-    if morsel == INVALID_VALUE {
-        return Err(DecodeError::InvalidByte(
-            index_at_start_of_input + 3,
-            input[3],
-        ));
-    }
-    accum |= u32::from(morsel) << 8;
-
     output[..3].copy_from_slice(&accum.to_be_bytes()[..3]);
-
-    Ok(())
+    ok(())
 }
 
 #[cfg(test)]
